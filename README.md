@@ -70,6 +70,54 @@ Static inventory fallback (API not running):
 ansible-playbook playbooks/install-packages.yml -i inventory/production/hosts
 ```
 
+## 4. Run it yourself (screenshot commands)
+
+**Controller session** (PowerShell on the admin machine):
+
+```powershell
+& "C:\Program Files\PuTTY\plink.exe" -ssh -pw award -hostkey "SHA256:icVgBkAbOgQLFpIjpRii1QR4eLgjZZ+bsQSTibWL4sY" user1@172.14.50.148
+```
+
+```bash
+cd ~/AWS_Ansible && ansible-playbook playbooks/install-windows-packages.yml
+```
+
+Expected screen: `changed: [win10] => (item=...)` per package, the
+`Verify installed programs` block with `True` for every path, and
+`PLAY RECAP ... changed=6 failed=0`.
+
+To see a real install (not just `changed=0` idempotency), reset first on the
+**win10 desktop** (`172.14.50.80`, RDP, `user1` / `qwerty1`) in PowerShell:
+
+```powershell
+choco uninstall notepadplusplus wireshark googlechrome git 7zip vscode -y
+```
+
+Second screenshot on win10 — proof the packages are really there:
+
+```powershell
+choco list
+@('C:\Program Files\Notepad++\notepad++.exe','C:\Program Files\Wireshark\Wireshark.exe','C:\Program Files\Google\Chrome\Application\chrome.exe','C:\Program Files\Git\bin\git.exe','C:\Program Files\7-Zip\7z.exe','C:\Program Files\Microsoft VS Code\Code.exe') | ForEach-Object { "$(Test-Path $_)  $_" }
+```
+
+**Linux EC2 direct SSH** — fix the key ACL once, then connect:
+
+```powershell
+icacls keys\cmd521-key.pem /inheritance:r /grant:r "$env:USERNAME:(R)"
+ssh -i keys\cmd521-key.pem ubuntu@13.62.102.60
+```
+
+```bash
+hostname; cat /etc/os-release | head -2
+dpkg -l | grep -E '^ii  (mc|htop|tree|nano|git|vim|wget|unzip)'
+which mc htop tree nano git vim wget unzip && htop --version
+```
+
+```bash
+ssh -i keys\cmd521-key.pem ec2-user@51.21.201.96
+rpm -q mc htop tree nano git vim wget unzip && curl --version | head -1
+```
+
 ## Project structure
 
 ```
