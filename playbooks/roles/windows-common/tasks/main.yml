@@ -29,6 +29,7 @@
     )
     foreach ($p in $paths) { Write-Output ((Test-Path $p).ToString() + '  ' + $p) }
   register: verify_paths
+  changed_when: false
   tags: verify
 
 - name: Show verification results
