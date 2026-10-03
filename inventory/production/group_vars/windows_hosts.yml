@@ -1,0 +1,10 @@
+---
+# Group variables for the Windows host (WinRM over HTTP).
+# The password is NEVER stored here: it lives either in the inventory API
+# database (web UI) or in an Ansible Vault file on the controller.
+
+ansible_connection: winrm
+ansible_winrm_scheme: http
+ansible_winrm_transport: basic
+ansible_winrm_server_cert_validation: ignore
+ansible_port: 5985

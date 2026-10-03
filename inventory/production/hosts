@@ -1,0 +1,25 @@
+# Static inventory — fallback for when the FastAPI inventory API is not running.
+# Default inventory is scripts/inventory.py (dynamic, reads the API).
+#
+# terraform apply outputs the two public IPs — paste them below.
+
+[aws_hosts]
+ubuntu        ansible_host=13.62.102.60 ansible_user=ubuntu
+amazon-linux  ansible_host=51.21.201.96 ansible_user=ec2-user
+
+[aws_hosts:vars]
+ansible_ssh_private_key_file=/home/user1/AWS_Ansible/keys/cmd521-key.pem
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_python_interpreter=/usr/bin/python3
+ansible_become=yes
+ansible_become_method=sudo
+
+[windows_hosts]
+win10  ansible_host=172.14.50.80  ansible_user=user1
+
+[windows_hosts:vars]
+ansible_connection=winrm
+ansible_winrm_scheme=http
+ansible_winrm_transport=basic
+ansible_winrm_server_cert_validation=ignore
+ansible_port=5985

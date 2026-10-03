@@ -1,0 +1,35 @@
+---
+# NOTE: This playbook requires WinRM to be already running on the target.
+# Run the bootstrap PowerShell script (winrm-setup.ps1) on Windows first,
+# OR run this playbook if WinRM is already partially enabled.
+
+- name: Bootstrap WinRM on Windows
+  hosts: "{{ target_hosts | default('windows_hosts') }}"
+  gather_facts: no
+  tasks:
+    - name: Enable WinRM Quick Config
+      ansible.windows.win_shell: winrm quickconfig -q
+      register: quickconfig
+
+    - name: Allow unencrypted connections
+      ansible.windows.win_shell: >
+        winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+
+    - name: Enable Basic authentication
+      ansible.windows.win_shell: >
+        winrm set winrm/config/service/auth '@{Basic="true"}'
+
+    - name: Enable remote shell access
+      ansible.windows.win_shell: >
+        winrm set winrm/config/winrs '@{AllowRemoteShellAccess="true"}'
+
+    - name: Open firewall port 5985
+      ansible.windows.win_shell: >
+        netsh advfirewall firewall add rule name="WinRM HTTP"
+        dir=in action=allow protocol=TCP localport=5985
+
+    - name: Ensure WinRM service is running
+      ansible.windows.win_service:
+        name: WinRM
+        state: started
+        startup_type: automatic

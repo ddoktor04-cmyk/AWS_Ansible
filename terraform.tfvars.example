@@ -1,0 +1,9 @@
+# Terraform variables — copy to terraform.tfvars and fill in.
+# NEVER commit terraform.tfvars (it is gitignored).
+
+aws_access_key = "AKIA0000000000000000"
+aws_secret_key = "EXAMPLE_SECRET_KEY"
+
+# Optional overrides:
+# primary_region = "eu-north-1"
+# instance_type  = "t3.micro"

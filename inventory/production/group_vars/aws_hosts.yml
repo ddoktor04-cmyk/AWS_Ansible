@@ -1,0 +1,22 @@
+---
+# Group variables for the Linux EC2 hosts (Ubuntu 24.04 + Amazon Linux 2023).
+# Used by the static inventory (inventory/production/hosts).
+# With the dynamic inventory the same values are set on the group in the web UI.
+
+common_packages:
+  - mc
+  - net-tools
+  - curl
+  - wget
+  - git
+  - vim
+  - htop
+  - unzip
+  - tree
+  - nano
+
+ansible_ssh_private_key_file: /home/user1/AWS_Ansible/keys/cmd521-key.pem
+ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+ansible_python_interpreter: /usr/bin/python3
+ansible_become: yes
+ansible_become_method: sudo

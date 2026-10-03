@@ -1,0 +1,6 @@
+---
+- name: Install common packages
+  hosts: "{{ target_hosts | default('aws_hosts') }}"
+  become: yes
+  roles:
+    - common

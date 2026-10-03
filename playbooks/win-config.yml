@@ -1,0 +1,77 @@
+---
+- name: Basic Windows configuration
+  hosts: "{{ target_hosts | default('windows_hosts') }}"
+  gather_facts: yes
+
+  tasks:
+    - name: Display system information
+      ansible.windows.win_shell: |
+        hostname
+        (Get-CimInstance Win32_OperatingSystem).Caption
+        (Get-CimInstance Win32_Processor).Name
+      register: sysinfo
+      tags: info
+
+    - name: Show system info
+      ansible.builtin.debug:
+        msg: "{{ sysinfo.stdout_lines }}"
+      tags: info
+
+    - name: Set timezone to Europe/Kyiv
+      community.windows.win_timezone:
+        timezone: Europe/Kyiv
+      tags: config
+
+    - name: Enable Windows Update service
+      ansible.windows.win_service:
+        name: wuauserv
+        state: started
+        startup_type: automatic
+      tags: update
+
+    - name: Install all Windows updates
+      ansible.windows.win_updates:
+        category_names:
+          - CriticalUpdates
+          - SecurityUpdates
+          - UpdateRollups
+        state: installed
+      register: updates
+      tags: update
+
+    - name: Show updates result
+      ansible.builtin.debug:
+        msg: "Installed {{ updates.installed }} updates, {{ updates.typed_updates | length }} updates found"
+      tags: update
+
+    - name: Disable unnecessary services
+      ansible.windows.win_service:
+        name: "{{ item }}"
+        state: stopped
+        startup_type: disabled
+      loop:
+        - SysMain
+        - DiagTrack
+        - dmwappushservice
+      ignore_errors: yes
+      tags: hardening
+
+    - name: Enable Windows Firewall for all profiles
+      community.windows.win_firewall:
+        state: enabled
+        profiles:
+          - Domain
+          - Private
+          - Public
+      tags: firewall
+
+    - name: Check disk space
+      ansible.windows.win_shell: |
+        Get-PSDrive -PSProvider FileSystem | Select-Object Name, @{N='Used(GB)';E={[math]::Round($_.Used/1GB,2)}}, @{N='Free(GB)';E={[math]::Round($_.Free/1GB,2)}}
+      register: disk
+      tags: info
+
+    - name: Show disk space
+      ansible.builtin.debug:
+        msg: "{{ disk.stdout_lines }}"
+      tags: info
