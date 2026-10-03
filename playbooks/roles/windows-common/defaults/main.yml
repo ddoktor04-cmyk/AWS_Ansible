@@ -7,3 +7,8 @@ windows_packages:
   - git
   - 7zip
   - vscode
+
+# GoogleChrome у choco-пакеті іноді має застарілий SHA256 (Google публікує MSI
+# раніше за оновлення маніфесту) — для цих пакетів перевірку хешів пропускаємо
+chocolatey_no_checksum:
+  - googlechrome
