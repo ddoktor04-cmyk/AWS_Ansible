@@ -1,6 +1,6 @@
 # ============================================================
-# EC2: Ubuntu + Amazon Linux, one region (eu-north-1)
-# Both hosts belong to the Ansible group "aws_hosts"
+# EC2: Ubuntu + Amazon Linux в одному регіоні (eu-north-1)
+# Обидва хости належать до Ansible-групи "aws_hosts"
 # ============================================================
 
 # ---------- AMI: Ubuntu 24.04 LTS (Canonical) ----------
@@ -57,7 +57,7 @@ data "aws_subnets" "default" {
   }
 }
 
-# ---------- SSH key pair (generated here, private key stays local) ----------
+# ---------- SSH-ключ (генерується тут, приватний лишається локально) ----------
 resource "tls_private_key" "lab" {
   algorithm = "RSA"
   rsa_bits  = 4096

@@ -1,6 +1,6 @@
 # ============================================================
 # Головний файл: terraform-блок і провайдери
-# Lab: 2 EC2 (Ubuntu + Amazon Linux) for the Ansible API lab
+# Лаба CMD521: 2 EC2 (Ubuntu + Amazon Linux) під Ansible-інвентар
 # ============================================================
 
 terraform {
@@ -22,7 +22,7 @@ terraform {
   }
 }
 
-# Default provider — single region (Stockholm, EU)
+# Провайдер за замовчуванням — один регіон (Європа, Stockholm)
 provider "aws" {
   region     = var.aws_region
   access_key = var.aws_access_key

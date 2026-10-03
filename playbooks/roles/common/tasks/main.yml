@@ -4,8 +4,11 @@
     update_cache: yes
   when: ansible_os_family == "Debian"
 
+# Amazon Linux 2023 постачає curl-minimal, який конфліктує з пакетом curl,
+# але бінарник curl вже присутній — тому на AL пропускаємо його в циклі.
 - name: Install common packages
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
   loop: "{{ common_packages }}"
+  when: not (ansible_distribution == "Amazon" and item == "curl")
