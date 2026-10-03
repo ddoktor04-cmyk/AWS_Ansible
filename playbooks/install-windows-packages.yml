@@ -1,0 +1,5 @@
+---
+- name: Install common Windows packages
+  hosts: "{{ target_hosts | default('windows_hosts') }}"
+  roles:
+    - windows-common

@@ -1,0 +1,35 @@
+---
+# Пакетний менеджер Chocolatey: встановлення + програми зі списку
+- name: Install Chocolatey
+  ansible.windows.win_shell: |
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+  args:
+    creates: C:\ProgramData\chocolatey\bin\choco.exe
+
+- name: Install Windows packages
+  chocolatey.chocolatey.win_chocolatey:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ windows_packages }}"
+
+# Перевірка: шляхи до бінарників усіх пакетів
+- name: Verify installed programs
+  ansible.windows.win_shell: |
+    $paths = @(
+      'C:\Program Files\Notepad++\notepad++.exe',
+      'C:\Program Files\Wireshark\Wireshark.exe',
+      'C:\Program Files\Google\Chrome\Application\chrome.exe',
+      'C:\Program Files\Git\bin\git.exe',
+      'C:\Program Files\7-Zip\7z.exe',
+      'C:\Program Files\Microsoft VS Code\Code.exe'
+    )
+    foreach ($p in $paths) { Write-Output ((Test-Path $p).ToString() + '  ' + $p) }
+  register: verify_paths
+  tags: verify
+
+- name: Show verification results
+  ansible.builtin.debug:
+    msg: "{{ verify_paths.stdout_lines }}"
+  tags: verify

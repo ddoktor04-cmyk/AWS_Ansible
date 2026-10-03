@@ -10,7 +10,7 @@ and an **Ansible playbook** configures them by group/role.
 | Inventory API + web UI | `api/` (FastAPI + SQLite + Jinja2) |
 | Dynamic inventory bridge | `scripts/inventory.py` → `http://localhost:8000` |
 | Static inventory (fallback) | `inventory/production/hosts` + `group_vars/` |
-| Playbooks & roles | `playbooks/` (`install-packages.yml` + role `common`) |
+| Playbooks & roles | `playbooks/` (`install-packages.yml` + role `common`, `install-windows-packages.yml` + role `windows-common`) |
 
 ## Hosts
 
@@ -60,6 +60,7 @@ ansible aws_hosts -m ping                     # connection test
 
 ansible-playbook playbooks/install-packages.yml
 ansible-playbook playbooks/install-packages.yml -e "target_hosts=ubuntu"
+ansible-playbook playbooks/install-windows-packages.yml   # choco: Notepad++, Wireshark, Chrome, git, 7-Zip, VS Code
 ansible-playbook playbooks/win-config.yml --tags info
 ```
 
@@ -82,8 +83,10 @@ ansible-playbook playbooks/install-packages.yml -i inventory/production/hosts
 │   └── group_vars/{aws_hosts,windows_hosts}.yml
 ├── playbooks/
 │   ├── install-packages.yml                  # hosts: aws_hosts → role common
+│   ├── install-windows-packages.yml          # hosts: windows_hosts → role windows-common
 │   ├── win-bootstrap.yml / win-config.yml    # Windows
-│   └── roles/common/{defaults,tasks}/main.yml
+│   ├── roles/common/{defaults,tasks}/main.yml
+│   └── roles/windows-common/{defaults,tasks}/main.yml   # Chocolatey
 ├── ansible.cfg                               # inventory = scripts/inventory.py
 ├── requirements.txt
 └── .opencode/skills/                         # ansible-playbook, ansible-dynamic-inventory

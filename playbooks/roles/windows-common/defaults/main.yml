@@ -1,0 +1,9 @@
+---
+# Список пакетів Chocolatey для Windows-хостів (група windows_hosts)
+windows_packages:
+  - notepadplusplus
+  - wireshark
+  - googlechrome
+  - git
+  - 7zip
+  - vscode
